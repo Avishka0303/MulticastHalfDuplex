@@ -52,6 +52,7 @@ public class MulticastSender extends Thread{
                     byte[] objectData = byteOutput.toByteArray();
                     DatagramPacket dataPacket = new DatagramPacket(objectData,objectData.length,groupAddress,ProgramData.MUL_PORT_NUMBER);
                     socket.send(dataPacket);
+                    System.out.println("sent p "+packetCount);
 
                 }
 

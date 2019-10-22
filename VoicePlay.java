@@ -36,6 +36,7 @@ public class VoicePlay extends Thread{
         while(isOnline){
             synchronized (VoicePlay.class){
                 if(isDataReady){
+                    System.out.println("Ready");
                     sourceDataLine.write(MulticastReceiver.voiceBuffer , 0, ProgramData.PACKET_SIZE);
                     isDataReady = false;
                 }
