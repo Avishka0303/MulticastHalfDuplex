@@ -26,7 +26,6 @@ public class MulticastReceiver extends Thread{
     private void readyReceiver() {
 
         try {
-
             /*Set the group ip for the socket.*/
             groupIP = InetAddress.getByName(ProgramData.GROUP_IP);
             buffer = new byte[ ProgramData.RECEIVE_BUFFER_SIZE ];
@@ -42,49 +41,46 @@ public class MulticastReceiver extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
     public void run(){
-        System.out.println("Reciever ready.");
 
         while (isOnline){
 
             System.out.println("Server is online");
 
-            while(isOnline){
+            try{
 
-                try{
+                //--------------------- Recieve the data packet----------------------------------
+                multicastSocket.receive(datagramPacket);
+                System.out.println("Yeah i am in.");
 
-                    //--------------------- Recieve the data packet----------------------------------
-                    multicastSocket.receive(datagramPacket);
+                //--------------------- Deserialize the object ----------------------------------
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(buffer);
+                ObjectInputStream inputObject = new ObjectInputStream(inputStream);
+                DataPacket packet = (DataPacket)inputObject.readObject();
 
-                    //--------------------- Deserialize the object ----------------------------------
-                    ByteArrayInputStream inputStream = new ByteArrayInputStream(buffer);
-                    ObjectInputStream inputObject = new ObjectInputStream(inputStream);
-                    DataPacket packet = (DataPacket)inputObject.readObject();
+                //--------------------- generate the hashcode for the user ----------------------
+                InetAddress senderIp = datagramPacket.getAddress();
 
-                    //--------------------- generate the hashcode for the user ----------------------
-                    InetAddress senderIp = datagramPacket.getAddress();
+                //--------------------------------------------------------------------------------
+                int pIndex = packet.packetIndex;
 
-                    //--------------------------------------------------------------------------------
-                    int pIndex = packet.packetIndex;
-
-                    System.out.println(pIndex);
-                    synchronized (voiceBuffer){
-                        voiceBuffer = packet.voice_buffer;
-                        VoicePlay.isDataReady =true;
-                    }
-
-                }catch(IOException ex){
-                    System.out.println("Error in multicast receive.");
-                    ex.printStackTrace();
-                }catch(ClassNotFoundException ex1){
-                    System.out.println("Error in read object");
+                System.out.println(pIndex);
+                synchronized (voiceBuffer){
+                    voiceBuffer = packet.voice_buffer;
+                    VoicePlay.isDataReady =true;
                 }
+
+            }catch(IOException ex){
+                System.out.println("Error in multicast receive.");
+                ex.printStackTrace();
+            }catch(ClassNotFoundException ex1){
+                System.out.println("Error in read object");
             }
-            multicastSocket.close();
         }
+
+        multicastSocket.close();
     }
 }
