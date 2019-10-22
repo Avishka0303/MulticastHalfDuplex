@@ -30,25 +30,19 @@ public class MulticastSender extends Thread{
         int packetCount=0;
 
         while (isSenderOnline){
-            System.out.println("z-------------------------------------------");
+
             try {
 
                 if(VoiceCapture.dataReady){
 
-                    System.out.println("Y-------");
                     if(packetCount==129) packetCount = 0;
 
                     //-------------------------Serialize the data packet---------------------.
-                    DataPacket packet;
-                    synchronized (VoiceCapture.tempBuffer){
-                        packet = new DataPacket( (packetCount++)%ProgramData.MEM_SIZE ,VoiceCapture.tempBuffer );
-                    }
+                    DataPacket packet = new DataPacket( (packetCount++)%ProgramData.MEM_SIZE ,VoiceCapture.tempBuffer );
                     ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
                     ObjectOutputStream outputObject = new ObjectOutputStream(byteOutput);
                     outputObject.writeObject(packet);
                     outputObject.flush();
-
-                    //VoiceCapture.dataReady=false;
 
                     byte[] objectData = byteOutput.toByteArray();
                     DatagramPacket dataPacket = new DatagramPacket(objectData,objectData.length,groupAddress,ProgramData.MUL_PORT_NUMBER);

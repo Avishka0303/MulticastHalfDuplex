@@ -23,7 +23,6 @@ public class MulticastReceiver extends Thread{
         return voiceBuffer;
     }
 
-
     private void readyReceiver() {
 
         try {
@@ -51,6 +50,7 @@ public class MulticastReceiver extends Thread{
         System.out.println("Reciever ready.");
 
         while (isOnline){
+
             System.out.println("Server is online");
 
             while(isOnline){
@@ -76,7 +76,6 @@ public class MulticastReceiver extends Thread{
                         voiceBuffer = packet.voice_buffer;
                         VoicePlay.isDataReady =true;
                     }
-
 
                 }catch(IOException ex){
                     System.out.println("Error in multicast receive.");
