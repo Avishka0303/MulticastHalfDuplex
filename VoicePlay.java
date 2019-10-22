@@ -1,3 +1,5 @@
+import sun.applet.Main;
+
 import javax.sound.sampled.*;
 
 public class VoicePlay extends Thread{
@@ -14,6 +16,8 @@ public class VoicePlay extends Thread{
     private void readyPlaySetup() {
 
         try {
+            audioFormat = MainControl.getAudioFormat();
+
             DataLine.Info dataLineInfo1 = new DataLine.Info(SourceDataLine.class, audioFormat);
             sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo1);
             sourceDataLine.open(audioFormat);
