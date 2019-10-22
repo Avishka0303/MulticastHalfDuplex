@@ -1,10 +1,7 @@
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 public class MulticastSender extends Thread{
 
@@ -18,9 +15,12 @@ public class MulticastSender extends Thread{
 
     private void readySender() {
         try {
+            groupAddress =InetAddress.getByName(ProgramData.GROUP_IP);
             socket = new DatagramSocket();
         } catch (SocketException e) {
             System.out.println("Socket cannot be used.");
+        } catch (UnknownHostException e) {
+            System.out.println("IP is not valid.");
         }
     }
 
@@ -30,24 +30,25 @@ public class MulticastSender extends Thread{
         int packetCount=0;
 
         while (isSenderOnline){
-
+            System.out.println("z-------------------------------------------");
             try {
 
                 if(VoiceCapture.dataReady){
 
+                    System.out.println("Y-------");
                     if(packetCount==129) packetCount = 0;
 
                     //-------------------------Serialize the data packet---------------------.
                     DataPacket packet;
                     synchronized (VoiceCapture.tempBuffer){
                         packet = new DataPacket( (packetCount++)%ProgramData.MEM_SIZE ,VoiceCapture.tempBuffer );
-                        VoiceCapture.dataReady=false;
                     }
                     ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
                     ObjectOutputStream outputObject = new ObjectOutputStream(byteOutput);
-
                     outputObject.writeObject(packet);
                     outputObject.flush();
+
+                    //VoiceCapture.dataReady=false;
 
                     byte[] objectData = byteOutput.toByteArray();
                     DatagramPacket dataPacket = new DatagramPacket(objectData,objectData.length,groupAddress,ProgramData.MUL_PORT_NUMBER);

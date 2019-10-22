@@ -1,10 +1,12 @@
+import org.omg.PortableServer.THREAD_POLICY_ID;
+
 import javax.sound.sampled.AudioFormat;
 import java.util.Scanner;
 
 public class MainControl {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         Scanner scan = new Scanner(System.in);
         //check sender or receiver
@@ -26,16 +28,18 @@ public class MainControl {
         }
     }
 
-    private static void senderReady() {
+    private static void senderReady() throws InterruptedException {
         VoiceCapture capture = new VoiceCapture();
         capture.start();
+        Thread.sleep(1200);
         MulticastSender sender = new MulticastSender();
         sender.start();
     }
 
-    private static void receiverReady(){
+    private static void receiverReady() throws InterruptedException {
         VoicePlay play = new VoicePlay();
         play.start();
+        Thread.sleep(1200);
         MulticastReceiver receiver = new MulticastReceiver();
         receiver.start();
     }

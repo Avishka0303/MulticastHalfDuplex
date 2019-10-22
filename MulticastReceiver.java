@@ -70,6 +70,8 @@ public class MulticastReceiver extends Thread{
 
                     //--------------------------------------------------------------------------------
                     int pIndex = packet.packetIndex;
+
+                    System.out.println(pIndex);
                     synchronized (voiceBuffer){
                         voiceBuffer = packet.voice_buffer;
                         VoicePlay.isDataReady =true;

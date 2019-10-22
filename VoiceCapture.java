@@ -63,7 +63,8 @@ public class VoiceCapture extends Thread{
                 readCount = targetDataLine.read(tempBuffer, 0, tempBuffer.length);  //capture sound into tempBuffer
                 if (readCount > 0) {
                     dataReady=true;
-                }
+                }else
+                    dataReady = false;
             }
         }
     }
